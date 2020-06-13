@@ -20,6 +20,7 @@ extern _off_t __librt_lseek_r(struct _reent *r,int fd,_off_t pos,int dir);
 extern _off64_t __librt_lseek64_r(struct _reent *r,int fd,_off64_t pos,int dir);
 extern caddr_t __librt_sbrk_r(struct _reent *ptr,ptrdiff_t incr);
 extern int __librt_chmod_r(struct _reent *r,const char *path,mode_t mode);
+extern int __librt_rename_r(struct _reent *r,const char *old,const char *new);
 extern int __librt_isatty_r(struct _reent *r,int fd);
 
 extern int __librt_mkdir_r(struct _reent *r,const char *path,mode_t mode);
@@ -63,6 +64,7 @@ static void __syscalls_init(void)
 	__syscalls.stat_r = __librt_stat_r;
 	__syscalls.stat64_r = __librt_stat64_r;
 	__syscalls.chmod_r = __librt_chmod_r;
+	__syscalls.rename_r = __librt_rename_r;
 	__syscalls.isatty_r = __librt_isatty_r;
 
 	__syscalls.mkdir_r = __librt_mkdir_r;
