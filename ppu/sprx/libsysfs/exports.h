@@ -15,6 +15,7 @@ EXPORT(sysFsUnlink, 0x7F4677A8);
 EXPORT(sysFsOpendir, 0x3F61245C);
 EXPORT(sysFsClosedir, 0xFF42DCC3);
 EXPORT(sysFsReaddir, 0x5C74903D);
+EXPORT(sysFsAccess, 0x06E681ED);
 EXPORT(sysFsAioInit, 0xDB869F20);
 EXPORT(sysFsAioReadEx, 0xC1C507E7);
 EXPORT(sysFsAioWriteEx, 0x4CEF342E);
