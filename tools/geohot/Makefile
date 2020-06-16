@@ -33,12 +33,13 @@ ifneq (,$(findstring CYGWIN,$(UNAME)))
 endif
 
 ifneq (,$(findstring Darwin,$(UNAME)))
-	SDK			:= /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk 
-	OSXCFLAGS	:= -mmacosx-version-min=10.14 -arch x86_64
+	SDK			:= $(shell xcrun --show-sdk-path)
+	OSX_MIN 	:= $(shell defaults read $(shell xcrun --show-sdk-platform-path)/Info MinimumSDKVersion 2> /dev/null || 10.4)
+	OSXCFLAGS	:= -mmacosx-version-min=$(OSX_MIN)
 	OSXCXXFLAGS	:=	$(OSXCFLAGS)
 	CXXFLAGS	+=	-fvisibility=hidden
 	CFLAGS	+= -I/usr/local/include -I/usr/local/opt/libelf/include/libelf -I/usr/local/opt/openssl/include
-	LDFLAGS		+= -mmacosx-version-min=10.14 -arch x86_64 -Wl,-syslibroot,$(SDK) -L/opt/local/lib -L/usr/local/opt/openssl/lib -lgmp -lcrypto -lz
+	LDFLAGS		+= -mmacosx-version-min=$(OSX_MIN) -Wl,-syslibroot,$(SDK) -L/opt/local/lib -L/usr/local/opt/openssl/lib -lgmp -lcrypto -lz
 endif
 
 ifneq (,$(findstring BSD,$(UNAME)))
