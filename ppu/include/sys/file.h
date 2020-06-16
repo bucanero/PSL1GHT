@@ -132,12 +132,6 @@ LV2_SYSCALL sysLv2FsLink(const char *oldpath,const char *newpath)
 	return_to_user_prog(s32);
 }
 
-LV2_SYSCALL sysLv2FsAccess(const char *path,s32 amode)
-{
-	lv2syscall2(816,(u64)path,amode);
-	return_to_user_prog(s32);
-}
-
 #ifdef __cplusplus
 	}
 #endif
