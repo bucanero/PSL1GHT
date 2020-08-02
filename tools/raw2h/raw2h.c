@@ -60,6 +60,7 @@ int main(int argc, char **argv)
 			fprintf(fo, "0x%.2x%s ", buf[k] & 0xff, ((k != r - 1) && ((k & 0xf) != 0xf)) ? "," : "");
 		}
 	}
+	fprintf(fo, "\n");
 
 	fclose(fi);
 	fclose(fo);
