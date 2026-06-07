@@ -275,7 +275,6 @@ static void list_sfo(const char *file, int debug, int pretty)
     }
 
     if (debug) {
-        size_t entry_off = SFO_HDR_SIZE;
         for (int i = 0; i < count; i++) {
             if (!pretty) {
                 printf("[X] Key Offset: %04x\n", kvs[i].key_off);
@@ -306,7 +305,6 @@ static void list_sfo(const char *file, int debug, int pretty)
                            kvs[i].value_off);
                 }
             }
-            entry_off += SFO_ENTRY_SIZE;
         }
     } else {
         print_dict(kvs, count);
