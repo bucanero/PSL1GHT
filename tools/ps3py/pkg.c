@@ -96,18 +96,23 @@ static void wr_be64(uint8_t *p, uint64_t v)
 /* ------------------------------------------------------------------ */
 /* SHA1 helper (produces 20-byte digest)                               */
 /* ------------------------------------------------------------------ */
+static void SHA1Finalize(struct SHA1Context *ctx, uint8_t *digest)
+{
+	for(int i = 0; i < 5; i++) {
+		*digest++ = ctx->Message_Digest[i] >> 24 & 0xff;
+		*digest++ = ctx->Message_Digest[i] >> 16 & 0xff;
+		*digest++ = ctx->Message_Digest[i] >> 8 & 0xff;
+		*digest++ = ctx->Message_Digest[i] & 0xff;
+	}
+}
+
 static void sha1_hash(const uint8_t *data, size_t len, uint8_t digest[20])
 {
     SHA1Context ctx;
     SHA1Reset(&ctx);
     SHA1Input(&ctx, data, (unsigned)len);
     SHA1Result(&ctx);
-    for (int i = 0; i < 5; i++) {
-        digest[i * 4]     = (uint8_t)(ctx.Message_Digest[i] >> 24);
-        digest[i * 4 + 1] = (uint8_t)(ctx.Message_Digest[i] >> 16);
-        digest[i * 4 + 2] = (uint8_t)(ctx.Message_Digest[i] >> 8);
-        digest[i * 4 + 3] = (uint8_t)(ctx.Message_Digest[i]);
-    }
+    SHA1Finalize(&ctx, digest);
 }
 
 /* ------------------------------------------------------------------ */
@@ -965,16 +970,17 @@ static void pack_pkg(const char *folder, const char *contentid,
         }
     }
 
-    SHA1Input(&qa_ctx, hdr, PKG_HDR_SIZE);
+    //SHA1Input(&qa_ctx, hdr, PKG_HDR_SIZE);
+    /* to match pkg.py behavior, uses zeroed contentID */
+    SHA1Input(&qa_ctx, hdr, 0x30);
+    SHA1Input(&qa_ctx, hdr + 0x60, 0x20);
+    SHA1Input(&qa_ctx, hdr + 0x60, 0x20);
+    SHA1Input(&qa_ctx, hdr + 0x60, 0x10);
+
     SHA1Input(&qa_ctx, buf.data, file_desc_length);
     SHA1Result(&qa_ctx);
     uint8_t qa_digest[20];
-    for (int i = 0; i < 5; i++) {
-        qa_digest[i*4]   = (uint8_t)(qa_ctx.Message_Digest[i] >> 24);
-        qa_digest[i*4+1] = (uint8_t)(qa_ctx.Message_Digest[i] >> 16);
-        qa_digest[i*4+2] = (uint8_t)(qa_ctx.Message_Digest[i] >> 8);
-        qa_digest[i*4+3] = (uint8_t)(qa_ctx.Message_Digest[i]);
-    }
+    SHA1Finalize(&qa_ctx, qa_digest);
 
     /* Store first 16 bytes of QA digest in header */
     memcpy(hdr + 48 + 0x30, qa_digest, 0x10);
